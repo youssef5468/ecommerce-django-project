@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-5">
+				<div class="product-gallery">
+					{% if product.image %}
+						<img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:100%;">
+					{% else %}
+						<img src="{% static 'img/product03.png' %}" alt="{{ product.name }}" style="width:100%;">
+					{% endif %}
+				</div>
+			</div>
+			<div class="col-md-7">
+				<div class="product-details">
+					<h2 class="product-name">{{ product.name }}</h2>
+					<p>Category: <a href="{% url 'catalog:product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></p>
+					<div>
+						<h3 class="product-price">£{{ product.price }}</h3>
+						{% if product.in_stock %}
+							<span class="product-available">{{ product.stock }} in stock</span>
+						{% else %}
+							<span class="label label-danger">Out of stock</span>
+						{% endif %}
+					</div>
+					<p>{{ product.description|linebreaks }}</p>
+
+					{% if product.in_stock %}
+					<form action="{% url 'cart:cart_add' product.id %}" method="post" class="cart">
+						{% csrf_token %}
+						<input type="hidden" name="next" value="{{ request.path }}">
+						<div class="qty">
+							<label>Quantity</label>
+							<div class="input-number">
+								<input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
+							</div>
+						</div>
+						<button type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+					</form>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

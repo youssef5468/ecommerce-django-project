@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}All Products{% endblock %}
+
+{% block content %}
+<div class="section">
+	<div class="container">
+		<div class="row">
+			<!-- SIDEBAR FILTERS -->
+			<div id="shop-sidebar" class="col-md-3">
+				<form method="get">
+					{% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+
+					<div class="sidebar-widget">
+						<h3 class="sidebar-title">Categories</h3>
+						<ul class="sidebar-widget-list">
+							<li><a href="{% url 'catalog:product_list' %}{% if query %}?q={{ query }}{% endif %}" {% if not selected_category %}style="font-weight:bold;"{% endif %}>All</a></li>
+							{% for c in categories %}
+							<li>
+								<a href="{% url 'catalog:product_list' %}?category={{ c.slug }}{% if query %}&q={{ query }}{% endif %}"
+								   {% if selected_category and selected_category.id == c.id %}style="font-weight:bold;"{% endif %}>
+									{{ c.name }}
+								</a>
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+
+					<div class="sidebar-widget">
+						<h3 class="sidebar-title">Price</h3>
+						<div class="sidebar-widget-body">
+							<label>Min <input type="number" step="0.01" name="min_price" value="{{ min_price }}" style="width:100%;"></label>
+							<label>Max <input type="number" step="0.01" name="max_price" value="{{ max_price }}" style="width:100%;"></label>
+						</div>
+					</div>
+
+					<div class="sidebar-widget">
+						<h3 class="sidebar-title">Sort by</h3>
+						<select name="sort" class="input-select" style="width:100%;">
+							<option value="">Default</option>
+							<option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>Price: Low to High</option>
+							<option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>Price: High to Low</option>
+							<option value="name_asc" {% if sort == "name_asc" %}selected{% endif %}>Name: A to Z</option>
+							<option value="name_desc" {% if sort == "name_desc" %}selected{% endif %}>Name: Z to A</option>
+						</select>
+					</div>
+					{% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.slug }}">{% endif %}
+					<button type="submit" class="primary-btn" style="margin-top:10px;">Apply Filters</button>
+				</form>
+			</div>
+
+			<!-- PRODUCTS -->
+			<div class="col-md-9">
+				<div class="row">
+					<div class="col-md-12">
+						<form method="get" class="shop-search" style="margin-bottom:20px;">
+							{% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.slug }}">{% endif %}
+							<input type="text" name="q" value="{{ query }}" placeholder="Search products...">
+							<button type="submit" class="primary-btn">Search</button>
+						</form>
+					</div>
+				</div>
+
+				<div class="row">
+					{% for product in products %}
+					<div class="col-md-4 col-xs-6">
+						<div class="product">
+							<div class="product-img">
+								{% if product.image %}
+									<img src="{{ product.image.url }}" alt="{{ product.name }}">
+								{% else %}
+									<img src="{% static 'img/product02.png' %}" alt="{{ product.name }}">
+								{% endif %}
+							</div>
+							<div class="product-body">
+								<p class="product-category">{{ product.category.name }}</p>
+								<h3 class="product-name"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+								<h4 class="product-price">£{{ product.price }}</h4>
+								{% if not product.in_stock %}<span class="label label-danger">Out of stock</span>{% endif %}
+							</div>
+							<div class="add-to-cart">
+								<a href="{{ product.get_absolute_url }}" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> View</a>
+							</div>
+						</div>
+					</div>
+					{% empty %}
+					<!-- Requirement 31: friendly message when no products match -->
+					<div class="col-md-12">
+						<p>No products match your search. Try different keywords or clear the filters.</p>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

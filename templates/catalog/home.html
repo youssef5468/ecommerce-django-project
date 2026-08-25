@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Electro Store — Home{% endblock %}
+
+{% block content %}
+<div class="section">
+	<div class="container">
+		<h2 class="section-title" style="margin-bottom:30px;">Featured Products</h2>
+		<div class="row">
+			{% for product in featured %}
+			<div class="col-md-3 col-xs-6">
+				<div class="product">
+					<div class="product-img">
+						{% if product.image %}
+							<img src="{{ product.image.url }}" alt="{{ product.name }}">
+						{% else %}
+							<img src="{% static 'img/product01.png' %}" alt="{{ product.name }}">
+						{% endif %}
+					</div>
+					<div class="product-body">
+						<p class="product-category">{{ product.category.name }}</p>
+						<h3 class="product-name"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+						<h4 class="product-price">£{{ product.price }}</h4>
+					</div>
+					<div class="add-to-cart">
+						<a href="{{ product.get_absolute_url }}" class="add-to-cart-btn"><i class="fa fa-cart-arrow-down"></i> View</a>
+					</div>
+				</div>
+			</div>
+			{% empty %}
+			<div class="col-md-12">
+				<p>No products available yet — check back soon.</p>
+			</div>
+			{% endfor %}
+		</div>
+		<div style="text-align:center; margin-top:20px;">
+			<a href="{% url 'catalog:product_list' %}" class="primary-btn">Browse All Products</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

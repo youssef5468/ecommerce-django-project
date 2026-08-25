@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed{% endblock %}
+
+{% block content %}
+<div class="section">
+	<div class="container text-center">
+		<h2><i class="fa fa-check-circle" style="color:#4CAF50;"></i> Thank you, {{ order.shipping_full_name }}!</h2>
+		<p>Your order <strong>#{{ order.id }}</strong> has been placed successfully.</p>
+		<p>Total: <strong>£{{ order.total_price }}</strong></p>
+		<a href="{% url 'orders:order_detail' order.id %}" class="primary-btn">View Order Details</a>
+		<a href="{% url 'catalog:product_list' %}" class="primary-btn">Continue Shopping</a>
+	</div>
+</div>
+{% endblock %}

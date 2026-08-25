@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="section">
+	<div class="container">
+		<h3 class="breadcrumb-header">Checkout</h3>
+		<form method="post">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-md-7">
+					<div class="shiping-details">
+						<div class="section-title">
+							<h3 class="title">Shipping address</h3>
+						</div>
+						{% for field in form %}
+						<div class="form-group">
+							<label>{{ field.label }}</label>
+							{{ field }}
+							{% for error in field.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+
+				<div class="col-md-5 order-details">
+					<div class="section-title text-center">
+						<h3 class="title">Your Order</h3>
+					</div>
+					<div class="order-summary">
+						<div class="order-col">
+							<div><strong>PRODUCT</strong></div>
+							<div><strong>TOTAL</strong></div>
+						</div>
+						{% for item in cart %}
+						<div class="order-products">
+							<div class="order-col">
+								<div>{{ item.quantity }} x {{ item.product.name }}</div>
+								<div>£{{ item.subtotal }}</div>
+							</div>
+						</div>
+						{% endfor %}
+						<div class="order-col">
+							<div><strong>TOTAL</strong></div>
+							<div><strong>£{{ cart.get_total }}</strong></div>
+						</div>
+					</div>
+					<button type="submit" class="primary-btn">Place Order</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

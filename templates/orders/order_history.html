@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="section">
+	<div class="container">
+		<h3 class="breadcrumb-header">My Orders</h3>
+		{% if orders %}
+		<table class="table shopping-summery">
+			<thead>
+				<tr class="main-heading">
+					<th>Order #</th>
+					<th>Date</th>
+					<th>Status</th>
+					<th>Total</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for order in orders %}
+				<tr>
+					<td>{{ order.id }}</td>
+					<td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+					<td>{{ order.get_status_display }}</td>
+					<td>£{{ order.total_price }}</td>
+					<td><a href="{% url 'orders:order_detail' order.id %}" class="primary-btn">View</a></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p>You haven't placed any orders yet. <a href="{% url 'catalog:product_list' %}">Start shopping</a>.</p>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

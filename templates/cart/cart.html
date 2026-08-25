@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Your Cart{% endblock %}
+
+{% block content %}
+<div class="section">
+	<div class="container">
+		<h3 class="breadcrumb-header">Shopping Cart</h3>
+
+		{% if cart.is_empty %}
+			<p>Your cart is empty. <a href="{% url 'catalog:product_list' %}">Browse products</a>.</p>
+		{% else %}
+		<div class="table-responsive">
+			<table class="table shopping-summery">
+				<thead>
+					<tr class="main-heading">
+						<th>Image</th>
+						<th>Product</th>
+						<th>Unit Price</th>
+						<th style="width:160px;">Quantity</th>
+						<th>Subtotal</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in cart %}
+					<tr>
+						<td>
+							{% if item.product.image %}
+								<img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width:60px;">
+							{% else %}
+								<img src="{% static 'img/product04.png' %}" alt="{{ item.product.name }}" style="width:60px;">
+							{% endif %}
+						</td>
+						<td><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></td>
+						<td>£{{ item.product.price }}</td>
+						<td>
+							<div style="display:flex; align-items:center; gap:6px;">
+								<form action="{% url 'cart:cart_update' item.product.id %}" method="post">
+									{% csrf_token %}
+									<input type="hidden" name="action" value="decrease">
+									<button type="submit" class="btn btn-default btn-sm">-</button>
+								</form>
+								<span>{{ item.quantity }}</span>
+								<form action="{% url 'cart:cart_update' item.product.id %}" method="post">
+									{% csrf_token %}
+									<input type="hidden" name="action" value="increase">
+									<button type="submit" class="btn btn-default btn-sm" {% if item.quantity >= item.product.stock %}disabled{% endif %}>+</button>
+								</form>
+							</div>
+						</td>
+						<td>£{{ item.subtotal }}</td>
+						<td>
+							<form action="{% url 'cart:cart_remove' item.product.id %}" method="post">
+								{% csrf_token %}
+								<button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-close"></i></button>
+							</form>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		<div class="row">
+			<div class="col-md-4 col-md-offset-8">
+				<div class="cart-summary">
+					<h5>TOTAL: £{{ cart.get_total }}</h5>
+				</div>
+				<div class="cart-btns" style="display:flex; gap:10px; margin-top:10px;">
+					<form action="{% url 'cart:cart_clear' %}" method="post">
+						{% csrf_token %}
+						<button type="submit" class="btn btn-default">Clear Cart</button>
+					</form>
+					<a href="{% url 'orders:checkout' %}" class="primary-btn">Checkout <i class="fa fa-arrow-circle-right"></i></a>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

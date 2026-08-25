@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="section">
+	<div class="container">
+		<h3 class="breadcrumb-header">Order #{{ order.id }}</h3>
+		<p>Date: {{ order.created_at|date:"Y-m-d H:i" }} — Status: {{ order.get_status_display }}</p>
+
+		{% if order.status == "pending" or order.status == "confirmed" %}
+		<form action="{% url 'orders:order_cancel' order.id %}" method="post" style="margin-bottom:15px;" onsubmit="return confirm('Cancel this order? This cannot be undone.');">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-danger">Cancel Order</button>
+		</form>
+		{% endif %}
+
+		<h4>Shipping to</h4>
+		<p>{{ order.shipping_full_name }}<br>{{ order.shipping_address }}, {{ order.shipping_city }}<br>{{ order.shipping_phone }}</p>
+
+		<table class="table shopping-summery">
+			<thead>
+				<tr class="main-heading">
+					<th>Product</th>
+					<th>Unit Price</th>
+					<th>Quantity</th>
+					<th>Subtotal</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in order.items.all %}
+				<tr>
+					<td>{{ item.product.name }}</td>
+					<td>${{ item.price }}</td>
+					<td>{{ item.quantity }}</td>
+					<td>${{ item.subtotal }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<h4 style="text-align:right;">Total: ${{ order.total_price }}</h4>
+	</div>
+</div>
+{% endblock %}
