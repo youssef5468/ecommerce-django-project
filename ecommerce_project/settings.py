@@ -136,6 +136,6 @@ STORAGES = {
         "BACKEND": DEFAULT_MEDIA_BACKEND,
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
