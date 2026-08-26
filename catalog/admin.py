@@ -13,9 +13,6 @@ class CategoryAdmin(admin.ModelAdmin):
         return obj.products.count()
 
     def has_delete_permission(self, request, obj=None):
-        # Requirement 12: category can only be deleted when it has no
-        # dependent products. Product uses on_delete=PROTECT, which raises
-        # ProtectedError automatically; this just hides the button up front.
         if obj is not None and obj.products.exists():
             return False
         return super().has_delete_permission(request, obj)

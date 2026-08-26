@@ -1,13 +1,3 @@
-"""
-Session-based shopping cart (requirement 41).
-
-We deliberately do NOT use a database model here: the spec asks for the
-cart to live in the Django session, so it should survive only for that
-browser session and never needs its own table. Each entry is keyed by
-product id and stores just the quantity; price/name are always re-read
-from the Product table when rendering, so the cart never goes stale if
-a price changes.
-"""
 from decimal import Decimal
 
 from catalog.models import Product
